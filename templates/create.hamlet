@@ -1,0 +1,12 @@
+$maybe Entity _ user <- muser
+    <p>Your are logged in as #{show $ userIdent user}
+    <p>
+        <a href=@{AuthR LogoutR}>Logout
+    <p>
+        NewPost
+        <form method=post action=@{CreateR} enctype=#{enctype}>
+            ^{entryWidget}
+            <input type=submit>
+$nothing
+    <p>
+        <a href=@{AuthR LoginR}>Go to the login page

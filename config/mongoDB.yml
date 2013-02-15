@@ -1,0 +1,24 @@
+Default: &defaults
+  user: yescrud
+  password: yescrud
+  host: localhost
+  database: yescrud-in-git
+  connections: 10
+
+Development:
+  <<: *defaults
+
+Testing:
+  database: yescrud_test
+  <<: *defaults
+
+Staging:
+  database: yescrud_staging
+  connections: 100
+  <<: *defaults
+
+Production:
+  database: yescrud_production
+  connections: 100
+  host: localhost
+  <<: *defaults

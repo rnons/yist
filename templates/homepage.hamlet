@@ -1,0 +1,4 @@
+<ul>
+    $forall Entity entryId entry <- entries
+        <li>
+            <a href=@{EntryR entryId}>#{entryTitle entry}
