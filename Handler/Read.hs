@@ -2,6 +2,8 @@
 module Handler.Read where
 
 import Control.Monad.Reader
+import Data.Algorithm.Diff
+import qualified Data.Text as T
 import Data.List (head)
 import Data.Tagged
 import Filesystem.Path.CurrentOS 
@@ -27,30 +29,47 @@ getAllParents c = do
        then return p
        else fmap (p++) $ getAllParents (head p)
 
+-- Is it possible to rewrite this to use `scanr`?
+diff :: [[Text]] -> [[Diff Text]]
+diff [] = []
+diff [x] = [getDiff [] x]
+diff (x:xs) = getDiff (head xs) x : diff xs
+
 -- Get all revisions of an entry.
 getRevisionR :: EntryId -> Handler RepHtml
 getRevisionR entryId = do
     entry <- runDB $ get404 entryId
     muser <- maybeAuth
     repo <- liftIO $ openLgRepository (entryRepoPath entryId)
-    contents <- liftIO $ withOpenLgRepository repo $ do
+    blobContents <- liftIO $ withOpenLgRepository repo $ do
         let master = "refs/heads/master"
         Just masterRef <- resolveRef master
-        
         mc <- resolveCommit masterRef
         parents <- getAllParents mc
         liftIO $ print $ length parents
-        let revisions = mc:parents
-        forM revisions $ \p -> do
-            Just centry <- commitEntry p (fromText $ entryTitle entry)
-            pentry <- identifyEntry p centry
-            let t = renderOid $ Tagged (pinnedOid pentry)
-            c <- catBlobUtf8 t
-            return (c, show $ pinnedOid pentry)
-
+        let commits = mc:parents
+        forM commits $ \c -> do
+            -- FixIt: doesn't work if `entryTitle` changed
+            Just centry <- commitEntry c (fromText $ entryTitle entry)
+            pentry <- identifyEntry c centry
+            let blobId = renderOid $ Tagged (pinnedOid pentry)
+            content <- catBlobUtf8 blobId
+            return (content, blobId)
+    let blobDiffs = diff $ map (T.lines . fst) blobContents
+        prefixDiffs = map (T.unlines . prefixit) blobDiffs
+        revisions = zip prefixDiffs $ map snd blobContents
     -- Use `print` here to be strict.
-    liftIO $ print contents
+    liftIO $ print blobContents
     defaultLayout $ do
         $(widgetFile "revision")
+  where
+    prefixit = map innermap
+    innermap d = case d of
+                      First l -> T.append "-" l
+                      Second l -> T.append "+" l
+                      Both l _ -> T.append " " l
+                                    
+
+   
 
         
