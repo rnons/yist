@@ -16,6 +16,11 @@ $newline never
 
         ^{pageHead pc}
 
+        <style>
+          body {
+            padding-top: 60px;
+          }
+        <link rel="stylesheet" href=@{StaticR css_bootstrap_responsive_css}>
         \<!--[if lt IE 9]>
         \<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         \<![endif]-->
@@ -23,12 +28,23 @@ $newline never
         <script>
           document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
     <body>
-        <div class="container">
-            <header>
-            <div id="main" role="main">
+        <header>
+            <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <a class="brand" href="#">Yist
+                        <p class="navbar-text pull-right">
+                            <a href=@{AuthR LoginR} class="navbar-link">Login
+                        <ul class="nav">
+                            <li class="active">
+                                <a href="#">Home
+                            <li>
+                                <a href="#">Link
+        <div id="main" role="main">
+            <div class="container">
               ^{pageBody pc}
-            <footer>
-                #{extraCopyright $ appExtra $ settings master}
+        <footer>
+            #{extraCopyright $ appExtra $ settings master}
 
         $maybe analytics <- extraAnalytics $ appExtra $ settings master
             <script>
