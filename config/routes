@@ -11,3 +11,4 @@
 /blog/#EntryId/delete DeleteR POST
 /blog/#EntryId/revision RevisionR GET
 /user/#UserId UserR GET
+/new NewUserR GET POST

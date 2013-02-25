@@ -1,6 +1,7 @@
 module Foundation where
 
 import Prelude
+import Data.Maybe (fromJust)
 import Yesod
 import Yesod.Static
 import Yesod.Auth
@@ -91,6 +92,7 @@ instance Yesod App where
         return . Just $ clientSessionBackend2 key getCachedDate
 
     defaultLayout widget = do
+        muser <- maybeAuth
         master <- getYesod
         mmsg <- getMessage
 
@@ -149,7 +151,8 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest _ = HomeR
+    --loginDest _ = HomeR
+    loginDest _ = NewUserR
     -- Where to send a user after logout
     logoutDest _ = HomeR
 

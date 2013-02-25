@@ -32,9 +32,16 @@ $newline never
             <div class="navbar navbar-inverse navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container">
-                        <a class="brand" href="#">Yist
-                        <p class="navbar-text pull-right">
-                            <a href=@{AuthR LoginR} class="navbar-link">Login
+                        <a class="brand" href=@{HomeR}>Yist
+                        <ul class="nav pull-right">
+                            $maybe Entity _ user <- muser
+                                <li>
+                                    <a href=@{CreateR} class="navbar-link">#{fromJust $ userIdent user}
+                                <li>
+                                    <a href=@{AuthR LogoutR} class="navbar-link">Log out
+                            $nothing
+                                <li class="navbar-text pull-right">
+                                    <a href=@{AuthR LoginR} class="navbar-link">Login
                         <ul class="nav">
                             <li class="active">
                                 <a href="#">Home

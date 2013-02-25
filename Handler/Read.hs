@@ -3,6 +3,7 @@ module Handler.Read where
 
 import Control.Monad.Reader
 import Data.Algorithm.Diff
+import Data.Maybe (fromJust)
 import qualified Data.Text as T
 import Data.List (head)
 import Data.Tagged

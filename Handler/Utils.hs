@@ -7,7 +7,7 @@ import Filesystem.Path.CurrentOS
 import Git
 import Git.Libgit2
 
-getCurrentUserId :: GHandler App App UserId
+getCurrentUserId :: Handler UserId
 getCurrentUserId = do
     muser <- maybeAuthId
     case muser of
@@ -15,7 +15,7 @@ getCurrentUserId = do
          Nothing -> undefined
 
 -- | Is it possible to get UserId from User, I mean without DB query
-getCurrentUser :: GHandler App App User
+getCurrentUser :: Handler User
 getCurrentUser = do
     muser <- maybeAuth
     case muser of

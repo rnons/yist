@@ -1,7 +1,4 @@
 $maybe Entity _ user <- muser
-    <p>Your are logged in as #{show $ userIdent user}
-    <p>
-        <a href=@{AuthR LogoutR}>Logout
     <p>
         NewPost
         <form method=post action=@{CreateR} enctype=#{enctype}>
