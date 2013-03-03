@@ -19,6 +19,7 @@ getEntryR :: EntryId -> Handler RepHtml
 getEntryR entryId = do
     entry <- runDB $ get404 entryId
     muser <- maybeAuth
+    mid <- maybeAuthId
     defaultLayout $ do
         $(widgetFile "read")
 
@@ -41,6 +42,7 @@ getRevisionR :: EntryId -> Handler RepHtml
 getRevisionR entryId = do
     entry <- runDB $ get404 entryId
     muser <- maybeAuth
+    mid <- maybeAuthId
     repo <- liftIO $ openLgRepository (entryRepoPath entryId)
     blobContents <- liftIO $ withOpenLgRepository repo $ do
         let master = "refs/heads/master"

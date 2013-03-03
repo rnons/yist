@@ -11,8 +11,8 @@ Email
     UniqueEmail email
 Entry
     title Text
-    author User
-    authorId UserId
+    authorName Text Maybe
+    authorId UserId Maybe
     posted UTCTime
     content Textarea
 

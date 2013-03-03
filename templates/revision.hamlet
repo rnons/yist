@@ -1,18 +1,18 @@
-$maybe Entity _ user <- muser
-    <p>Your are logged in as #{show $ userEmail user}
-    <p>
-        <a href=@{AuthR LogoutR}>Logout
-$nothing
-    <p>
-        <a href=@{AuthR LoginR}>Go to the login page
 <h1>#{entryTitle entry}
-<p>Posted by 
-    <a href=@{UserR (entryAuthorId entry)}>#{userEmail $ entryAuthor entry}
-$forall (diff, blobId) <- revisions
-    <p>#{blobId}
-    <pre>#{diff}
-$maybe Entity _ user <- muser
-    $if user == entryAuthor entry
+<div class="span2">
+    <div class="sidebar-nav">
+        <ul class="nav nav-list">
+            <li>
+                <a href=@{EntryR entryId}>Content
+            <li class="active">
+                <a href=@{RevisionR entryId}>Revision
+<div class="span9">
+    <p>Posted by 
+        <a href=@{UserR (fromJust $ entryAuthorId entry)}>#{fromJust $ entryAuthorName entry}
+    $forall (diff, blobId) <- revisions
+        <p>#{blobId}
+        <pre>#{diff}
+    $if mid == entryAuthorId entry
         <p>
             <a href=@{UpdateR entryId}>Edit
         <form method=post action=@{DeleteR entryId}>

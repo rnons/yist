@@ -1,7 +1,7 @@
 module Foundation where
 
 import Prelude
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, fromMaybe)
 import Yesod
 import Yesod.Static
 import Yesod.Auth
@@ -60,12 +60,12 @@ mkYesodData "App" $(parseRoutesFile "config/routes")
 type Form x = Html -> MForm App App (FormResult x, Widget)
 
 isAuthor entryId = do
-    muser <- maybeAuth
+    muserId <- maybeAuthId
     entry <- runDB $ get404 entryId
-    case muser of
+    case muserId of
          Nothing -> return AuthenticationRequired
-         Just (Entity _ user)
-            | (user == entryAuthor entry) -> return Authorized
+         Just uid 
+            | (Just uid == entryAuthorId entry) -> return Authorized
             | otherwise -> unauthorizedI MsgNotAuthor
 
 -- Please see the documentation for the Yesod typeclass. There are a number
@@ -92,6 +92,7 @@ instance Yesod App where
         return . Just $ clientSessionBackend2 key getCachedDate
 
     defaultLayout widget = do
+        muserId <- maybeAuthId
         muser <- maybeAuth
         master <- getYesod
         mmsg <- getMessage

@@ -1,0 +1,4 @@
+<p ."span6">
+    ^{fvInput titleView}
+<p ."span6">
+    ^{fvInput contentView}

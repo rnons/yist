@@ -36,15 +36,15 @@ $newline never
                         <ul class="nav pull-right">
                             $maybe Entity _ user <- muser
                                 <li>
-                                    <a href=@{CreateR} class="navbar-link">#{fromJust $ userIdent user}
+                                    <a href=@{UserR $ fromJust muserId} class="navbar-link">#{fromMaybe "New User" $ userIdent user}
                                 <li>
                                     <a href=@{AuthR LogoutR} class="navbar-link">Log out
                             $nothing
-                                <li class="navbar-text pull-right">
+                                <li>
                                     <a href=@{AuthR LoginR} class="navbar-link">Login
                         <ul class="nav">
                             <li class="active">
-                                <a href="#">Home
+                                <a href=@{CreateR}>create yist
                             <li>
                                 <a href="#">Link
         <div id="main" role="main">

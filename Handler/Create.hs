@@ -1,6 +1,8 @@
 module Handler.Create where
 
 import Control.Monad.Reader
+import Data.Maybe (fromJust)
+import Data.Time (UTCTime, getCurrentTime)
 import Git
 import Git.Utils
 import Git.Libgit2
@@ -11,7 +13,6 @@ import Handler.Utils
 
 getCreateR :: Handler RepHtml
 getCreateR = do
-    muser <- maybeAuth
     (entryWidget, enctype) <- generateFormPost entryForm
     defaultLayout $ do
         $(widgetFile "create")
@@ -19,7 +20,8 @@ getCreateR = do
 postCreateR :: Handler RepHtml
 postCreateR = do
     muser <- maybeAuth
-    ((result, entryWidget), enctype) <- runFormPost entryForm
+    let user = entityVal $ fromJust muser
+    ((result, entryWidget), enctype) <- runFormPost entryForm 
     case result of
          FormSuccess entry -> do
              entryId <- runDB $ insert entry
@@ -35,7 +37,7 @@ postCreateR = do
                  blob <- createBlobUtf8 (unTextarea $ entryContent entry)
                  tr <- newTree
                  putBlob tr (fromText $ entryTitle entry) blob
-                 sig <- getCurrentUserSig $ entryAuthor entry
+                 sig <- getCurrentUserSig user
                  c <- createCommit [] (treeRef tr) sig sig "Created" Nothing
                  updateRef_ "refs/heads/master" (RefObj (commitRef c))
                  updateRef_ "HEAD" (RefSymbolic "refs/heads/master")

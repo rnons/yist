@@ -1,9 +1,16 @@
 <h1>#{entryTitle entry}
-<p>Posted by 
-    <a href=@{UserR (entryAuthorId entry)}>#{fromJust $ userIdent $ entryAuthor entry}
-<article>#{entryContent entry}
-$maybe Entity _ user <- muser
-    $if user == entryAuthor entry
+<div class="span2">
+    <div class="sidebar-nav">
+        <ul class="nav nav-list">
+            <li class="active">
+                <a href=@{EntryR entryId}>Content
+            <li>
+                <a href=@{RevisionR entryId}>Revision
+<div class="span9">
+    <p>Posted by 
+        <a href=@{UserR (fromJust $ entryAuthorId entry)}>#{fromJust $ entryAuthorName entry}
+    <pre>#{entryContent entry}
+    $if mid == entryAuthorId entry
         <p>
             <a href=@{UpdateR entryId}>Edit
         <form method=post action=@{DeleteR entryId}>

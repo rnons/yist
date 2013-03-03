@@ -12,14 +12,15 @@ userForm = renderDivs $ Username
     
 getUserR :: UserId -> Handler RepHtml
 getUserR userId = do
-    entries <- runDB $ selectList [EntryAuthorId ==. userId] [Desc EntryPosted]
+    entries <- runDB $ selectList [EntryAuthorId ==. Just userId] [Desc EntryPosted]
     defaultLayout $ do
         $(widgetFile "user")
 
 getNewUserR :: Handler RepHtml
 getNewUserR = do
+    liftIO $ print "hello"
     Just (Entity _ user) <- maybeAuth
-    
+    liftIO $ print $ userIdent user 
     case userIdent user of
          Just _ -> redirect HomeR
          Nothing -> do

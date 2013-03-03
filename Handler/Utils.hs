@@ -1,25 +1,19 @@
 module Handler.Utils where
 
-import Data.Time (getCurrentTime)
+import Data.Maybe (fromJust)
+import Data.Time (UTCTime, getCurrentTime)
 import Import hiding (FilePath)
 import Filesystem.Path.CurrentOS 
 
 import Git
 import Git.Libgit2
 
-getCurrentUserId :: Handler UserId
-getCurrentUserId = do
-    muser <- maybeAuthId
-    case muser of
-         Just uid -> return uid
-         Nothing -> undefined
 
--- | Is it possible to get UserId from User, I mean without DB query
-getCurrentUser :: Handler User
-getCurrentUser = do
+getCurrentUserIdent :: Handler (Maybe Text)
+getCurrentUserIdent = do
     muser <- maybeAuth
     case muser of
-         Just (Entity _ user) -> return user
+         Just (Entity _ user) -> return $ userIdent user
          Nothing -> undefined
 
 -- | The Signature is need in every commit. The User is passed in.
@@ -28,25 +22,34 @@ getCurrentUserSig :: User -> LgRepository Signature
 getCurrentUserSig user = do
     now  <- liftIO getCurrentTime
     return Signature {
-               signatureName  = userEmail user
+               signatureName  = fromJust $ userIdent user
              , signatureEmail = userEmail user
              , signatureWhen  = now }
 
 entryForm :: Form Entry
 entryForm = renderDivs $ Entry
-    <$> areq textField "Title" Nothing
-    <*> aformM getCurrentUser
-    <*> aformM getCurrentUserId
+    <$> areq textField "Title" 
+                       { fsId = Just "title"
+                       , fsAttrs = [("class", "span8")]
+                       } Nothing
+    <*> aformM getCurrentUserIdent
+    <*> aformM maybeAuthId
     <*> aformM (liftIO getCurrentTime)
-    <*> areq textareaField "Content" Nothing
+    <*> areq textareaField "Content" 
+                           { fsId = Just "content"
+                           , fsAttrs = [("class", "span8"), ("rows", "12")]
+                           } Nothing
 
 updateForm :: Entry -> Form Entry
 updateForm entry = renderDivs $ Entry
     <$> areq textField "Title" (Just $ entryTitle entry)
-    <*> aformM getCurrentUser
-    <*> aformM getCurrentUserId
+    <*> aformM getCurrentUserIdent
+    <*> aformM maybeAuthId
     <*> aformM (liftIO getCurrentTime)
-    <*> areq textareaField "Content" (Just $ entryContent entry)
+    <*> areq textareaField "Content" 
+                           { fsId = Just "content"
+                           , fsAttrs = [("class", "span8"), ("rows", "12")]
+                           } (Just $ entryContent entry)
 
 entryRepoPath :: EntryId -> FilePath
 entryRepoPath entryId = repoDir </> (fromText $ toPathPiece entryId) <.> "git"
