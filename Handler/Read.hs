@@ -1,4 +1,3 @@
-{-# LANGUAGE ConstraintKinds #-}
 module Handler.Read where
 
 import Control.Monad.Reader
@@ -6,7 +5,6 @@ import Data.Algorithm.Diff
 import Data.Maybe (fromJust)
 import qualified Data.Text as T
 import Data.List (head)
-import Data.Tagged
 import Filesystem.Path.CurrentOS 
 import Git
 import Git.Utils
@@ -23,19 +21,26 @@ getEntryR entryId = do
     defaultLayout $ do
         $(widgetFile "read")
 
---getAllParents :: Git.Repository m => Git.Commit m -> m [Git.Commit m]
-getAllParents :: Git.Repository LgRepository => Git.Commit LgRepository -> LgRepository [Git.Commit LgRepository]
+getAllParents :: Git.Commit (LgRepository IO) 
+              -> (LgRepository IO) [Git.Commit (LgRepository IO)]
 getAllParents c = do
     p <- getCommitParents c
     if Import.null p 
        then return p
        else fmap (p++) $ getAllParents (head p)
 
+-- | `getDiff` to every revision
 -- Is it possible to rewrite this to use `scanr`?
-diff :: [[Text]] -> [[Diff Text]]
-diff [] = []
-diff [x] = [getDiff [] x]
-diff (x:xs) = getDiff (head xs) x : diff xs
+revDiff :: [[Text]] -> [[Diff Text]]
+revDiff [] = []
+revDiff [x] = [getDiff [] x]
+revDiff (x:xs) = getDiff (head xs) x : revDiff xs
+
+data Version = Version
+    { yistBid :: Text
+    , yistName :: String
+    , yistContent :: Text
+    } deriving (Show)
 
 -- Get all revisions of an entry.
 getRevisionR :: EntryId -> Handler RepHtml
@@ -44,7 +49,7 @@ getRevisionR entryId = do
     muser <- maybeAuth
     mid <- maybeAuthId
     repo <- liftIO $ openLgRepository (entryRepoPath entryId)
-    blobContents <- liftIO $ withOpenLgRepository repo $ do
+    yist <- liftIO $ withOpenLgRepository repo $ do
         let master = "refs/heads/master"
         Just masterRef <- resolveRef master
         mc <- resolveCommit masterRef
@@ -52,17 +57,21 @@ getRevisionR entryId = do
         liftIO $ print $ length parents
         let commits = mc:parents
         forM commits $ \c -> do
-            -- FixIt: doesn't work if `entryTitle` changed
-            Just centry <- commitEntry c (fromText $ entryTitle entry)
-            pentry <- identifyEntry c centry
-            let blobId = renderOid $ Tagged (pinnedOid pentry)
+            -- assume only one file in tree
+            tr <- resolveTree $ commitTree c
+            (path, trEntry) <- fmap head (treeBlobEntries tr)
+            pentry <- identifyEntry c trEntry
+            let blobId = renderOid $ pinnedOid pentry
             content <- catBlobUtf8 blobId
-            return (content, blobId)
-    let blobDiffs = diff $ map (T.lines . fst) blobContents
+            return Version { yistBid = blobId
+                           , yistName = encodeString path
+                           , yistContent = content
+                           }
+    let blobDiffs = revDiff $ map (T.lines . yistContent) yist
         prefixDiffs = map (T.unlines . prefixit) blobDiffs
-        revisions = zip prefixDiffs $ map snd blobContents
+        revisions = zip3 (map yistBid yist) (map yistName yist) prefixDiffs 
     -- Use `print` here to be strict.
-    liftIO $ print blobContents
+    liftIO $ print yist
     defaultLayout $ do
         $(widgetFile "revision")
   where

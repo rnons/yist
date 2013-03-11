@@ -2,12 +2,13 @@ module Handler.Utils where
 
 import Data.Maybe (fromJust)
 import Data.Time (UTCTime, getCurrentTime)
-import Import hiding (FilePath)
 import Filesystem.Path.CurrentOS 
+import qualified Filesystem.Path.CurrentOS as P
 
 import Git
 import Git.Libgit2
 
+import Import
 
 getCurrentUserIdent :: Handler (Maybe Text)
 getCurrentUserIdent = do
@@ -18,7 +19,7 @@ getCurrentUserIdent = do
 
 -- | The Signature is need in every commit. The User is passed in.
 -- Or should I retrieve User in function body?
-getCurrentUserSig :: User -> LgRepository Signature
+getCurrentUserSig :: User -> LgRepository IO Signature
 getCurrentUserSig user = do
     now  <- liftIO getCurrentTime
     return Signature {
@@ -51,7 +52,7 @@ updateForm entry = renderDivs $ Entry
                            , fsAttrs = [("class", "span8"), ("rows", "12")]
                            } (Just $ entryContent entry)
 
-entryRepoPath :: EntryId -> FilePath
+entryRepoPath :: EntryId -> P.FilePath
 entryRepoPath entryId = repoDir </> (fromText $ toPathPiece entryId) <.> "git"
 
 entryFilePath :: EntryId -> Text -> String

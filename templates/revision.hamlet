@@ -9,8 +9,9 @@
 <div class="span9">
     <p>Posted by 
         <a href=@{UserR (fromJust $ entryAuthorId entry)}>#{fromJust $ entryAuthorName entry}
-    $forall (diff, blobId) <- revisions
+    $forall (blobId, name, diff) <- revisions
         <p>#{blobId}
+        <p>#{name}
         <pre>#{diff}
     $if mid == entryAuthorId entry
         <p>
