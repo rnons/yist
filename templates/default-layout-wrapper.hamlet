@@ -21,10 +21,12 @@ $newline never
             padding-top: 60px;
           }
         <link rel="stylesheet" href=@{StaticR css_bootstrap_responsive_css}>
+        <link rel="stylesheet" href=@{StaticR google_prettify_css}>
         \<!--[if lt IE 9]>
         \<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         \<![endif]-->
 
+        <script src=@{StaticR google_prettify_js}></script>
         <script>
           document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
     <body>

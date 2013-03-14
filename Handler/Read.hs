@@ -16,8 +16,7 @@ import Handler.Utils
 getEntryR :: EntryId -> Handler RepHtml
 getEntryR entryId = do
     entry <- runDB $ get404 entryId
-    muser <- maybeAuth
-    mid <- maybeAuthId
+    muserId <- maybeAuthId
     defaultLayout $ do
         $(widgetFile "read")
 

@@ -78,7 +78,6 @@ library
                  , system-filepath
                  , mtl                           >= 2.1        && < 2.2
                  , Diff                          >= 0.2        && < 0.3
-                 , tagged                        >= 0.4        && < 0.5
                  , gitlib                        >= 1.0        && < 1.2
                  , gitlib-libgit2                >= 1.0        && < 1.2
 
