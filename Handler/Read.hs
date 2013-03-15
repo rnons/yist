@@ -2,7 +2,6 @@ module Handler.Read where
 
 import Control.Monad.Reader
 import Data.Algorithm.Diff
-import Data.Maybe (fromJust)
 import qualified Data.Text as T
 import Data.List (head)
 import Filesystem.Path.CurrentOS 
@@ -47,17 +46,17 @@ getRevisionR entryId = do
     entry <- runDB $ get404 entryId
     muser <- maybeAuth
     mid <- maybeAuthId
-    repo <- liftIO $ openLgRepository (entryRepoPath entryId)
-    yist <- liftIO $ withOpenLgRepository repo $ do
+    repo <- liftIO $ openLgRepository (entryRepoOptions entryId)
+    yist <- liftIO $ runLgRepository repo $ do
         let master = "refs/heads/master"
         Just masterRef <- resolveRef master
-        mc <- resolveCommit masterRef
+        mc <- resolveCommitRef masterRef
         parents <- getAllParents mc
         liftIO $ print $ length parents
         let commits = mc:parents
         forM commits $ \c -> do
             -- assume only one file in tree
-            tr <- resolveTree $ commitTree c
+            tr <- resolveTreeRef $ commitTree c
             (path, trEntry) <- fmap head (treeBlobEntries tr)
             pentry <- identifyEntry c trEntry
             let blobId = renderOid $ pinnedOid pentry
@@ -76,9 +75,9 @@ getRevisionR entryId = do
   where
     prefixit = map innermap
     innermap d = case d of
-                      First l -> T.append "-" l
-                      Second l -> T.append "+" l
-                      Both l _ -> T.append " " l
+                      First l -> T.append "- " l
+                      Second l -> T.append "+ " l
+                      Both l _ -> T.append "  " l
                                     
 
    

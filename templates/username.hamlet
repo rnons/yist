@@ -1,3 +1,4 @@
+<p>Please set up your username
 <form method=post action=@{NewUserR} enctype=#{enctype}>
     ^{entryWidget}
     <input type=submit>

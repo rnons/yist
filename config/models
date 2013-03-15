@@ -1,8 +1,8 @@
 User
     email Text
-    ident Text Maybe
-    password Text Maybe
+    name Text
     UniqueUser email
+    UniqueUserName name
     deriving Eq
 Email
     email Text
@@ -11,7 +11,7 @@ Email
     UniqueEmail email
 Entry
     title Text
-    authorName Text Maybe
+    authorName Text
     authorId UserId Maybe
     posted UTCTime
     content Textarea

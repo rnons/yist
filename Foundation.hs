@@ -1,7 +1,7 @@
 module Foundation where
 
 import Prelude
-import Data.Maybe (fromJust, fromMaybe)
+import Data.Text
 import Yesod
 import Yesod.Static
 import Yesod.Auth
@@ -55,7 +55,8 @@ mkMessage "App" "messages" "en"
 -- for our application to be in scope. However, the handler functions
 -- usually require access to the AppRoute datatype. Therefore, we
 -- split these actions into two functions and place them in separate files.
-mkYesodData "App" $(parseRoutesFile "config/routes")
+--mkYesodData "App" $(parseRoutesFile "config/routes")
+mkYesodData "App" $(parseRoutesFileNoCheck "config/routes")
 
 type Form x = Html -> MForm App App (FormResult x, Widget)
 
@@ -162,7 +163,7 @@ instance YesodAuth App where
         case x of
             Just (Entity uid _) -> return $ Just uid
             Nothing -> do
-                fmap Just $ insert $ User (credsIdent creds) Nothing Nothing
+                fmap Just $ insert $ User (credsIdent creds) "" 
 
     -- You can add other plugins like BrowserID, email or OAuth here
     authPlugins _ = [authBrowserId, authGoogleEmail]

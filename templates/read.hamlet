@@ -8,7 +8,7 @@
 <div class="span9">
     <h2>#{entryTitle entry}
     <p>Posted by 
-        <a href=@{UserR (fromJust $ entryAuthorId entry)}>#{fromJust $ entryAuthorName entry}
+        <a href=@{UserR $ entryAuthorName entry}>#{entryAuthorName entry}
     <pre class="prettyprint linenums">
         #{unTextarea $ entryContent entry}
     $if muserId == entryAuthorId entry

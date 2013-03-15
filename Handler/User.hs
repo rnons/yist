@@ -10,23 +10,34 @@ userForm :: Form Username
 userForm = renderDivs $ Username
     <$> areq textField "Username" Nothing
     
+{-
 getUserR :: UserId -> Handler RepHtml
 getUserR userId = do
     entries <- runDB $ selectList [EntryAuthorId ==. Just userId] [Desc EntryPosted]
     defaultLayout $ do
         $(widgetFile "user")
+-}
+
+getUserR :: Text -> Handler RepHtml
+getUserR name = do
+    entries <- runDB $ do
+        mu <- getBy $ UniqueUserName name
+        case mu of
+             Nothing -> lift notFound 
+             Just _ -> do
+                 selectList [EntryAuthorName ==. name] [Desc EntryPosted]
+    defaultLayout $ do
+        $(widgetFile "user")
 
 getNewUserR :: Handler RepHtml
 getNewUserR = do
-    liftIO $ print "hello"
     Just (Entity _ user) <- maybeAuth
-    liftIO $ print $ userIdent user 
-    case userIdent user of
-         Just _ -> redirect HomeR
-         Nothing -> do
+    case userName user of
+         "" -> do
              (entryWidget, enctype) <- generateFormPost userForm
              defaultLayout $ do
                  $(widgetFile "username")
+         _  -> redirect HomeR
 
 postNewUserR :: Handler RepHtml
 postNewUserR = do
@@ -35,7 +46,7 @@ postNewUserR = do
     ((result, entryWidget), enctype) <- runFormPost userForm
     case result of 
          FormSuccess username -> do
-             runDB $ replace uid $ User (userEmail user) (Just $ usernameIdent username) Nothing
+             runDB $ replace uid $ User (userEmail user) (usernameIdent username) 
              redirect HomeR
          _ -> defaultLayout $ do
              $(widgetFile "username")

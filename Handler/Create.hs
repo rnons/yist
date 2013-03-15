@@ -2,7 +2,6 @@ module Handler.Create where
 
 import Control.Monad.Reader
 import Data.Maybe (fromJust)
-import Data.Time (UTCTime, getCurrentTime)
 import Git
 import Git.Utils
 import Git.Libgit2
@@ -25,12 +24,13 @@ postCreateR = do
     case result of
          FormSuccess entry -> do
              entryId <- runDB $ insert entry
-             repo <- liftIO $ createLgRepository (entryRepoPath entryId) True
+             repo <- liftIO $ openLgRepository (entryRepoOptions entryId) 
              -- Bare repo is sufficient for now.
              --let filepath = entryFilePath entryId $ entryTitle entry
              --liftIO $ writeFile filepath 
              --                   (unTextarea $ entryContent entry)
-             liftIO $ runReaderT (runLgRepository action) repo
+             --liftIO $ runReaderT (runLgRepository action) repo
+             liftIO $ runLgRepository repo action
              redirect $ EntryR entryId
            where 
              action = do

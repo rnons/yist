@@ -38,7 +38,7 @@ $newline never
                         <ul class="nav pull-right">
                             $maybe Entity _ user <- muser
                                 <li>
-                                    <a href=@{UserR $ fromJust muserId} class="navbar-link">#{fromMaybe "New User" $ userIdent user}
+                                    <a href=@{UserR $ userName user} class="navbar-link">#{userName user}
                                 <li>
                                     <a href=@{AuthR LogoutR} class="navbar-link">Log out
                             $nothing

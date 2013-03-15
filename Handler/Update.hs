@@ -26,8 +26,8 @@ postUpdateR entryId = do
     case result of
          FormSuccess entry -> do
              runDB $ replace entryId entry
-             repo <- liftIO $ openLgRepository (entryRepoPath entryId)
-             liftIO $ runReaderT (runLgRepository action) repo
+             repo <- liftIO $ openLgRepository (entryRepoOptions entryId)
+             liftIO $ runLgRepository repo action
              redirect $ EntryR entryId
            where 
              action = do
