@@ -2,17 +2,17 @@
     <div class="sidebar-nav">
         <ul class="nav nav-list">
             <li class="active">
-                <a href=@{EntryR entryId}>Content
+                <a href=@{EntryR authorName entryId}>Content
             <li>
-                <a href=@{RevisionR entryId}>Revision
+                <a href=@{RevisionR authorName entryId}>Revision
 <div class="span9">
     <h2>#{entryTitle entry}
     <p>Posted by 
-        <a href=@{UserR $ entryAuthorName entry}>#{entryAuthorName entry}
+        <a href=@{UserR authorName}>#{entryAuthorName entry}
     <pre class="prettyprint linenums">
         #{unTextarea $ entryContent entry}
     $if muserId == entryAuthorId entry
         <p>
-            <a href=@{UpdateR entryId}>Edit
-        <form method=post action=@{DeleteR entryId}>
+            <a href=@{UpdateR authorName entryId}>Edit
+        <form method=post action=@{DeleteR authorName entryId}>
             <input type=submit value="Delete">

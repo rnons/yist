@@ -5,10 +5,10 @@
 /robots.txt RobotsR GET
 
 / HomeR GET
-/blog CreateR GET POST
-/blog/#EntryId EntryR GET
-/blog/#EntryId/update UpdateR GET POST
-/blog/#EntryId/delete DeleteR POST
-/blog/#EntryId/revision RevisionR GET
-/new NewUserR GET POST
+/create CreateR GET POST
+/#Text/#EntryId EntryR GET
+/#Text/#EntryId/update UpdateR GET POST
+/#Text/#EntryId/delete DeleteR POST
+/#Text/#EntryId/revision RevisionR GET
+/freshman NewUserR GET POST
 /#Text UserR GET

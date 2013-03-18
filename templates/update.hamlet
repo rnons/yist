@@ -2,6 +2,6 @@
     <a href=@{AuthR LogoutR}>Logout
 <p>
     Update Yist
-    <form method=post action=@{UpdateR entryId} enctype=#{enctype}>
+    <form method=post action=@{UpdateR authorName entryId} enctype=#{enctype}>
         ^{entryWidget}
         <input type=submit>

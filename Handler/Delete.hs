@@ -6,8 +6,8 @@ import Filesystem.Path.CurrentOS (encodeString)
 import Import
 import Handler.Utils
 
-postDeleteR :: EntryId -> Handler RepHtml
-postDeleteR  entryId = do
+postDeleteR :: Text -> EntryId -> Handler RepHtml
+postDeleteR authorName entryId = do
     runDB $ delete entryId
     liftIO $ removeDirectoryRecursive $ encodeString $ entryRepoPath entryId
     redirect HomeR

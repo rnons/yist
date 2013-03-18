@@ -25,13 +25,8 @@ postCreateR = do
          FormSuccess entry -> do
              entryId <- runDB $ insert entry
              repo <- liftIO $ openLgRepository (entryRepoOptions entryId) 
-             -- Bare repo is sufficient for now.
-             --let filepath = entryFilePath entryId $ entryTitle entry
-             --liftIO $ writeFile filepath 
-             --                   (unTextarea $ entryContent entry)
-             --liftIO $ runReaderT (runLgRepository action) repo
              liftIO $ runLgRepository repo action
-             redirect $ EntryR entryId
+             redirect $ EntryR (entryAuthorName entry) entryId
            where 
              action = do
                  blob <- createBlobUtf8 (unTextarea $ entryContent entry)

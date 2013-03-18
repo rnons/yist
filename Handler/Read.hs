@@ -12,8 +12,8 @@ import Git.Libgit2
 import Import
 import Handler.Utils
 
-getEntryR :: EntryId -> Handler RepHtml
-getEntryR entryId = do
+getEntryR :: T.Text -> EntryId -> Handler RepHtml
+getEntryR authorName entryId = do
     entry <- runDB $ get404 entryId
     muserId <- maybeAuthId
     defaultLayout $ do
@@ -41,8 +41,8 @@ data Version = Version
     } deriving (Show)
 
 -- Get all revisions of an entry.
-getRevisionR :: EntryId -> Handler RepHtml
-getRevisionR entryId = do
+getRevisionR :: Text -> EntryId -> Handler RepHtml
+getRevisionR authorName entryId = do
     entry <- runDB $ get404 entryId
     muser <- maybeAuth
     mid <- maybeAuthId

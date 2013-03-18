@@ -79,8 +79,8 @@ instance Yesod App where
         case muser of
              Just _ -> return Authorized
              Nothing -> return AuthenticationRequired
-    isAuthorized (UpdateR entryId) _ = isAuthor entryId
-    isAuthorized (DeleteR entryId) _ = isAuthor entryId
+    isAuthorized (UpdateR authorName entryId) _ = isAuthor entryId
+    isAuthorized (DeleteR authorName entryId) _ = isAuthor entryId
 
     isAuthorized _ _ = return Authorized
 

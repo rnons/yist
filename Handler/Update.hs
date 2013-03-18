@@ -11,15 +11,15 @@ import Import
 import Handler.Utils
 
 
-getUpdateR :: EntryId -> Handler RepHtml
-getUpdateR entryId = do
+getUpdateR :: Text -> EntryId -> Handler RepHtml
+getUpdateR authorName entryId = do
     entry <- runDB $ get404 entryId
     (entryWidget, enctype) <- generateFormPost $ updateForm entry
     defaultLayout $ do
         $(widgetFile "update")
         
-postUpdateR :: EntryId -> Handler RepHtml
-postUpdateR entryId = do
+postUpdateR :: Text -> EntryId -> Handler RepHtml
+postUpdateR authorName entryId = do
     muser <- maybeAuth
     let user = entityVal $ fromJust muser
     ((result, entryWidget), enctype) <- runFormPost entryForm
@@ -28,7 +28,7 @@ postUpdateR entryId = do
              runDB $ replace entryId entry
              repo <- liftIO $ openLgRepository (entryRepoOptions entryId)
              liftIO $ runLgRepository repo action
-             redirect $ EntryR entryId
+             redirect $ EntryR (entryAuthorName entry) entryId
            where 
              action = do
                  let masterRef = "refs/heads/master"
