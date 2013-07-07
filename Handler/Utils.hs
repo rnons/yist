@@ -1,6 +1,6 @@
 module Handler.Utils where
 
-import Data.Time (getCurrentTime)
+import Data.Time (getCurrentTime, getZonedTime)
 import Filesystem.Path.CurrentOS 
 import qualified Filesystem.Path.CurrentOS as P
 
@@ -20,7 +20,7 @@ getCurrentUserName = do
 -- Or should I retrieve User in function body?
 getCurrentUserSig :: User -> LgRepository IO Signature
 getCurrentUserSig user = do
-    now  <- liftIO getCurrentTime
+    now  <- liftIO getZonedTime
     return Signature {
                signatureName  = userName user
              , signatureEmail = userEmail user
@@ -32,9 +32,9 @@ entryForm = renderDivs $ Entry
                        { fsId = Just "title"
                        , fsAttrs = [("class", "span8")]
                        } Nothing
-    <*> aformM getCurrentUserName
-    <*> aformM maybeAuthId
-    <*> aformM (liftIO getCurrentTime)
+    <*> lift getCurrentUserName
+    <*> lift maybeAuthId
+    <*> lift (liftIO getCurrentTime)
     <*> areq textareaField "Content" 
                            { fsId = Just "content"
                            , fsAttrs = [("class", "span8"), ("rows", "12")]
@@ -43,9 +43,9 @@ entryForm = renderDivs $ Entry
 updateForm :: Entry -> Form Entry
 updateForm entry = renderDivs $ Entry
     <$> areq textField "Title" (Just $ entryTitle entry)
-    <*> aformM getCurrentUserName
-    <*> aformM maybeAuthId
-    <*> aformM (liftIO getCurrentTime)
+    <*> lift getCurrentUserName
+    <*> lift maybeAuthId
+    <*> lift (liftIO getCurrentTime)
     <*> areq textareaField "Content" 
                            { fsId = Just "content"
                            , fsAttrs = [("class", "span8"), ("rows", "12")]
@@ -54,8 +54,8 @@ updateForm entry = renderDivs $ Entry
 entryRepoPath :: EntryId -> P.FilePath
 entryRepoPath entryId = repoDir </> (fromText $ toPathPiece entryId) <.> "git"
 
-entryRepoOptions :: EntryId -> RepositoryOptions r
-entryRepoOptions entryId = RepositoryOptions path True True undefined
+entryRepoOptions :: EntryId -> RepositoryOptions
+entryRepoOptions entryId = RepositoryOptions path True True
   where
     path = repoDir </> (fromText $ toPathPiece entryId) <.> "git"
 

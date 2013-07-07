@@ -11,14 +11,14 @@ userForm = renderDivs $ Username
     <$> areq textField "Username" Nothing
     
 {-
-getUserR :: UserId -> Handler RepHtml
+getUserR :: UserId -> Handler Html
 getUserR userId = do
     entries <- runDB $ selectList [EntryAuthorId ==. Just userId] [Desc EntryPosted]
     defaultLayout $ do
         $(widgetFile "user")
 -}
 
-getUserR :: Text -> Handler RepHtml
+getUserR :: Text -> Handler Html
 getUserR name = do
     entries <- runDB $ do
         mu <- getBy $ UniqueUserName name
@@ -29,7 +29,7 @@ getUserR name = do
     defaultLayout $ do
         $(widgetFile "user")
 
-getNewUserR :: Handler RepHtml
+getNewUserR :: Handler Html
 getNewUserR = do
     Just (Entity _ user) <- maybeAuth
     case userName user of
@@ -39,7 +39,7 @@ getNewUserR = do
                  $(widgetFile "username")
          _  -> redirect HomeR
 
-postNewUserR :: Handler RepHtml
+postNewUserR :: Handler Html
 postNewUserR = do
     Just (Entity _ user) <- maybeAuth
     Just uid <- maybeAuthId

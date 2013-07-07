@@ -6,13 +6,12 @@ import qualified Data.Text as T
 import Data.List (head)
 import Filesystem.Path.CurrentOS 
 import Git
-import Git.Utils
 import Git.Libgit2
 
 import Import
 import Handler.Utils
 
-getEntryR :: T.Text -> EntryId -> Handler RepHtml
+getEntryR :: T.Text -> EntryId -> Handler Html
 getEntryR authorName entryId = do
     entry <- runDB $ get404 entryId
     muserId <- maybeAuthId
@@ -41,7 +40,7 @@ data Version = Version
     } deriving (Show)
 
 -- Get all revisions of an entry.
-getRevisionR :: Text -> EntryId -> Handler RepHtml
+getRevisionR :: Text -> EntryId -> Handler Html
 getRevisionR authorName entryId = do
     entry <- runDB $ get404 entryId
     muser <- maybeAuth
@@ -49,7 +48,7 @@ getRevisionR authorName entryId = do
     repo <- liftIO $ openLgRepository (entryRepoOptions entryId)
     yist <- liftIO $ runLgRepository repo $ do
         let master = "refs/heads/master"
-        Just masterRef <- resolveRef master
+        Just masterRef <- resolveReference master
         mc <- resolveCommitRef masterRef
         parents <- getAllParents mc
         liftIO $ print $ length parents

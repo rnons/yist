@@ -20,7 +20,7 @@ import Text.Hamlet
 import qualified Filesystem.Path.CurrentOS as P
 
 -- | Which Persistent backend this site is using.
-type PersistConfig = MongoConf
+type PersistConf = MongoConf
 
 -- Static setting below. Changing these requires a recompile
 

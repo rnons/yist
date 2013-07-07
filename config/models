@@ -4,6 +4,7 @@ User
     UniqueUser email
     UniqueUserName name
     deriving Eq
+    deriving Typeable
 Email
     email Text
     user UserId Maybe

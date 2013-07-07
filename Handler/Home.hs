@@ -3,7 +3,7 @@ module Handler.Home where
 
 import Import
 
-getHomeR :: Handler RepHtml
+getHomeR :: Handler Html
 getHomeR = do
     muser <- maybeAuth
     entries <- runDB $ selectList [] [Desc EntryPosted]
