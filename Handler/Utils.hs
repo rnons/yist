@@ -35,9 +35,13 @@ entryForm = renderDivs $ Entry
     <*> lift getCurrentUserName
     <*> lift maybeAuthId
     <*> lift (liftIO getCurrentTime)
-    <*> areq textareaField "Content" 
+    <*> areq textareaField "Intro" 
+                           { fsId = Just "intro"
+                           , fsAttrs = [("class", "span8")]
+                           } Nothing
+    <*> aopt textareaField "" 
                            { fsId = Just "content"
-                           , fsAttrs = [("class", "span8"), ("rows", "12")]
+                           , fsAttrs = [("class", "span8"), ("rows", "12"), ("hidden", "true")]
                            } Nothing
 
 updateForm :: Entry -> Form Entry
@@ -46,7 +50,11 @@ updateForm entry = renderDivs $ Entry
     <*> lift getCurrentUserName
     <*> lift maybeAuthId
     <*> lift (liftIO getCurrentTime)
-    <*> areq textareaField "Content" 
+    <*> areq textareaField "Intro" 
+                           { fsId = Just "intro"
+                           , fsAttrs = [("class", "span8")]
+                           } Nothing
+    <*> aopt textareaField "Content" 
                            { fsId = Just "content"
                            , fsAttrs = [("class", "span8"), ("rows", "12")]
                            } (Just $ entryContent entry)

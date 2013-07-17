@@ -7,10 +7,13 @@
                 <a href=@{RevisionR authorName entryId}>Revision
 <div class="span9">
     <h2>#{entryTitle entry}
-    <p>Posted by 
+    <p>Posted by
         <a href=@{UserR authorName}>#{entryAuthorName entry}
-    <pre class="prettyprint linenums">
-        #{unTextarea $ entryContent entry}
+    <p>
+        #{unTextarea $ entryIntro entry}
+    <input type=text placeholder="Add Link" id=add-link class=span8>
+    <div id="yist">
+        <ol id="yist-ol">
     $if muserId == entryAuthorId entry
         <p>
             <a href=@{UpdateR authorName entryId}>Edit

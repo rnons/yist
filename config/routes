@@ -1,14 +1,15 @@
-/static StaticR Static getStatic
-/auth   AuthR   Auth   getAuth
+/!static StaticR Static getStatic
+/!auth   AuthR   Auth   getAuth
 
-/favicon.ico FaviconR GET
-/robots.txt RobotsR GET
+/!favicon.ico FaviconR GET
+/!robots.txt RobotsR GET
 
 / HomeR GET
-/create CreateR GET POST
+/!check CheckUrlR POST
+/!create CreateR GET POST
+/!freshman NewUserR GET POST
 /#Text/#EntryId EntryR GET
 /#Text/#EntryId/update UpdateR GET POST
 /#Text/#EntryId/delete DeleteR POST
 /#Text/#EntryId/revision RevisionR GET
-/freshman NewUserR GET POST
 /#Text UserR GET

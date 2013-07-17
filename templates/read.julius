@@ -1,1 +1,13 @@
-prettyPrint();
+$("#add-link").keypress(function(e) {
+    if(e.which == 13) {
+        var url = $(this).val();
+        $.post("@{CheckUrlR}", { url: url }, function(data) {
+            console.log(data.title);
+            console.log(data.error);
+            if (!data.error) {
+                var elem = "<li><a href='" + url + "'>" + data.title + "</a></li>";
+                $("#yist-ol").append(elem);
+            }
+        });
+    }
+});

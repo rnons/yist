@@ -15,6 +15,7 @@ Entry
     authorName Text
     authorId UserId Maybe
     posted UTCTime
-    content Textarea
+    intro Textarea
+    content Textarea Maybe
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

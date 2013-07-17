@@ -32,7 +32,7 @@ postUpdateR authorName entryId = do
              action = do
                  let masterRef = "refs/heads/master"
                  Just cParent <- resolveReference masterRef
-                 blob <- createBlobUtf8 (unTextarea $ entryContent entry)
+                 blob <- createBlobUtf8 (unTextarea $ entryIntro entry)
                  tr <- createTree $ putBlob (fromText $ entryTitle entry) blob
                  sig <- getCurrentUserSig user
                  c <- createCommit [cParent] tr sig sig

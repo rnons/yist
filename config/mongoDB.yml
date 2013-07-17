@@ -1,24 +1,24 @@
 Default: &defaults
-  user: yescrud
-  password: yescrud
+  user: yist
+  password: yist
   host: localhost
-  database: yescrud-in-git
+  database: yist-in-git
   connections: 10
 
 Development:
   <<: *defaults
 
 Testing:
-  database: yescrud_test
+  database: yist_test
   <<: *defaults
 
 Staging:
-  database: yescrud_staging
+  database: yist_staging
   connections: 100
   <<: *defaults
 
 Production:
-  database: yescrud_production
+  database: yist_production
   connections: 100
   host: localhost
   <<: *defaults

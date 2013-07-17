@@ -81,6 +81,12 @@ library
                  , Diff                          >= 0.3        && < 0.4
                  , gitlib                        >= 1.3        
                  , gitlib-libgit2                >= 1.3
+                 , http-types
+                 , wai
+                 , conduit
+                 , xml-conduit
+                 , html-conduit
+                 , unordered-containers
 
 executable         yist
     if flag(library-only)

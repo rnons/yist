@@ -55,8 +55,8 @@ mkMessage "App" "messages" "en"
 -- for our application to be in scope. However, the handler functions
 -- usually require access to the AppRoute datatype. Therefore, we
 -- split these actions into two functions and place them in separate files.
---mkYesodData "App" $(parseRoutesFile "config/routes")
-mkYesodData "App" $(parseRoutesFileNoCheck "config/routes")
+mkYesodData "App" $(parseRoutesFile "config/routes")
+--mkYesodData "App" $(parseRoutesFileNoCheck "config/routes")
 
 type Form x = Html -> MForm (HandlerT App IO) (FormResult x, Widget)
 
@@ -104,6 +104,7 @@ instance Yesod App where
 
         pc <- widgetToPageContent $ do
             $(widgetFile "normalize")
+            addScriptRemote "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
             addStylesheet $ StaticR css_bootstrap_css
             $(widgetFile "default-layout")
         giveUrlRenderer $(hamletFile "templates/default-layout-wrapper.hamlet")

@@ -35,7 +35,7 @@ postCreateR = do
              redirect $ EntryR (entryAuthorName entry) entryId
            where 
              action = do
-                 blob <- createBlobUtf8 (unTextarea $ entryContent entry)
+                 blob <- createBlobUtf8 (unTextarea $ entryIntro entry)
                  tr <- createTree $ putBlob (fromText $ entryTitle entry) blob
                  sig <- getCurrentUserSig user
                  --c <- createCommit [] (treeRef tr) sig sig "Created" Nothing

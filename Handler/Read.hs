@@ -1,12 +1,20 @@
 module Handler.Read where
 
+import qualified Control.Exception as E
 import Control.Monad.Reader
 import Data.Algorithm.Diff
-import qualified Data.Text as T
+import qualified Data.ByteString as B
+import Data.Conduit
+import qualified Data.HashMap.Strict as Map
 import Data.List (head)
+import qualified Data.Text as T
 import Filesystem.Path.CurrentOS 
 import Git
 import Git.Libgit2
+import Network.HTTP.Types.Status
+import Network.HTTP.Conduit
+import Text.HTML.DOM
+import Text.XML.Cursor
 
 import Import
 import Handler.Utils
@@ -17,6 +25,52 @@ getEntryR authorName entryId = do
     muserId <- maybeAuthId
     defaultLayout $ do
         $(widgetFile "read")
+
+data UrlInfo = UrlInfo 
+    { url :: Text
+    , title :: Text
+    , error :: Text
+    }
+
+instance ToJSON UrlInfo where
+    toJSON (UrlInfo u t e) =
+        object [ "url" .= u
+               , "title" .= t
+               , "error" .= e
+               ]
+
+checkUrl url = E.catch
+    (do req <- parseUrl $ T.unpack url
+        withManager $ \manager -> do
+            res <- http req manager
+            let st = responseStatus res
+                hdrMap = Map.fromList (responseHeaders res)
+
+            title <- 
+                if "text/html; charset=" `B.isPrefixOf` (hdrMap Map.! "Content-Type")
+                    then do
+                        doc <- responseBody res $$+- sinkDoc
+                        return $ head $ fromDocument doc $// element "title" &// content                   
+                    else do
+                        responseBody res $$+- return ()
+                        return url
+
+            if st == status200 
+                then return $ Just $ UrlInfo url title ""
+                else return Nothing)
+    (\e -> do print (e :: E.SomeException)
+              return Nothing)
+
+postCheckUrlR :: Handler Value
+postCheckUrlR = do
+    url <- lookupPostParam "url"
+    case url of
+         Just url' -> do
+             vurl <- lift $ checkUrl url'
+             case vurl of
+                 Just vurl' -> returnJson vurl'
+                 _          -> returnJson $ UrlInfo url' "" "Invalid"
+         _         -> returnJson $ UrlInfo "" "" "Invalid"
 
 getAllParents :: Git.Commit (LgRepository IO) 
               -> (LgRepository IO) [Git.Commit (LgRepository IO)]
